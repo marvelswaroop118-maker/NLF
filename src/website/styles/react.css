@@ -1,0 +1,119 @@
+/* React route and state styling, preserving the established NLF visual system. */
+#root {
+  min-height: 100svh;
+}
+#main-content {
+  outline: none;
+}
+.inner-page {
+  padding-top: 84px;
+}
+.route-section h1 {
+  font-size: clamp(2.75rem, 4.7vw, 4rem);
+  margin: 0 0 20px;
+}
+.tabs button[aria-selected='true'] {
+  background: var(--navy);
+  color: #fff;
+}
+.tabs button {
+  transition:
+    background 180ms ease,
+    color 180ms ease;
+}
+.panels > .panel,
+.tdetail > [role='tabpanel'],
+.main > .pp {
+  animation: react-panel-in 250ms var(--ease) both;
+}
+@keyframes react-panel-in {
+  from {
+    opacity: 0.35;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.principle-page#principle {
+  height: auto;
+}
+.principle-page .pin {
+  position: relative;
+  height: auto;
+  padding: 100px 0;
+}
+.pin .wrap {
+  width: 100%;
+}
+.copy [hidden] {
+  display: none !important;
+}
+.copy [role='tabpanel'].on {
+  visibility: visible;
+}
+.fstep :is(h2, h3):focus {
+  outline: none;
+}
+.form-status {
+  color: #9a3424;
+  font-size: 0.875rem;
+  margin-top: 16px;
+}
+.form-status:empty {
+  display: none;
+}
+.review-copy {
+  color: var(--slate);
+  font-size: 1rem;
+  margin-bottom: 24px;
+}
+.preview-rsvp {
+  display: grid;
+  justify-items: end;
+  max-width: 180px;
+  flex-shrink: 0;
+}
+.rsvp-status {
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--gold-light);
+  text-align: right;
+  margin-top: 5px;
+}
+.rsvp-status:empty {
+  display: none;
+}
+.contact-page {
+  background: var(--navy);
+  color: #fff;
+}
+.contact-page .lede {
+  color: #b7c2d0;
+}
+.fbot {
+  margin-top: 64px;
+}
+.links {
+  gap: 20px;
+}
+@media (max-width: 760px) {
+  .inner-page {
+    padding-top: 72px;
+  }
+  .principle-page .pin {
+    padding-block: 80px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .panels > .panel,
+  .tdetail > [role='tabpanel'],
+  .main > .pp {
+    animation: none;
+  }
+}
+.contact-details-heading {
+  font-size: 2rem;
+  margin-bottom: 28px;
+}

@@ -1,0 +1,28 @@
+{
+  "name": "national-lawyers-federation",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "description": "National Lawyers Federation React website",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite build",
+    "check": "node --test tests/*.test.js && vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "format": "prettier --write src tests vite.config.js index.html README.md DESIGN.md",
+    "format:check": "prettier --check src tests vite.config.js index.html README.md DESIGN.md"
+  },
+  "engines": {
+    "node": ">=20.19"
+  },
+  "dependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-router-dom": "^7.9.6"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^5.1.1",
+    "prettier": "^3.10.1",
+    "vite": "^7.2.2"
+  }
+}
