@@ -1,0 +1,208 @@
+.charter-section {
+  padding-block: var(--section-space);
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.charter-header-row {
+  margin-bottom: clamp(36px, 5vw, 56px);
+}
+
+.charter-header-row :is(h1, h2) {
+  max-width: 11ch;
+}
+
+.charter-lead {
+  padding-top: 6px;
+}
+
+/* Mosaic Spread: Wide Architectural Plate + Judicial Navy Dossier */
+.charter-mosaic {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--gutter);
+  margin-bottom: clamp(48px, 6vw, 72px);
+  align-items: start;
+}
+
+.charter-photo-tile {
+  position: relative;
+  margin: 0;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: var(--surface);
+}
+
+.charter-photo-tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.charter-photo-inset {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: min(320px, 78%);
+  padding: 20px;
+  background: var(--bg);
+  color: var(--ink);
+  font-size: var(--step-small);
+  line-height: 1.5;
+}
+
+.charter-dossier-tile {
+  background: var(--navy);
+  color: var(--navy-ink);
+  padding: clamp(24px, 3vw, 36px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 28px;
+}
+
+.charter-dossier-crest {
+  width: 76px;
+  height: 76px;
+  object-fit: contain;
+}
+
+.charter-dossier-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px 16px;
+}
+
+.charter-stat-cell {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.charter-stat-cell dd {
+  font-family: var(--serif);
+  font-size: var(--step-head);
+  line-height: 1;
+  color: var(--gold);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.charter-stat-cell dt {
+  font-size: var(--step-small);
+  color: var(--navy-muted);
+}
+
+/* Charter Tabs Aligned on the 42% Axis */
+.charter-tabs-row {
+  display: grid;
+  grid-template-columns: 42% minmax(0, 1fr);
+  column-gap: var(--gutter);
+  margin-bottom: 24px;
+}
+
+.charter-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 28px;
+}
+
+.charter-tab {
+  padding-block: 10px;
+  font-size: var(--step-lead);
+  font-family: var(--serif);
+  font-weight: 600;
+  color: var(--muted);
+  border-bottom: 4px solid transparent;
+  transition:
+    color var(--t-hover) var(--ease-out),
+    border-color var(--t-hover) var(--ease-out);
+}
+
+.charter-tab:hover {
+  color: var(--ink);
+}
+
+.charter-tab[aria-selected='true'] {
+  color: var(--ink);
+  border-bottom-color: var(--accent);
+}
+
+.charter-ledger[hidden] {
+  display: none;
+}
+
+.charter-list {
+  list-style: none;
+  display: grid;
+  gap: 4px;
+}
+
+.charter-row {
+  display: grid;
+  grid-template-columns: 42% minmax(0, 1fr);
+  column-gap: var(--gutter);
+  padding: clamp(20px, 2.6vw, 28px) 0;
+  background: var(--bg);
+}
+
+.charter-row:nth-child(even) {
+  background: var(--surface);
+  padding-inline: 24px;
+  margin-inline: -24px;
+}
+
+.charter-row-title {
+  font-family: var(--serif);
+  font-size: var(--step-lead);
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.2;
+}
+
+.charter-row-body {
+  font-size: var(--step-body);
+  line-height: 1.6;
+  color: var(--ink);
+  max-width: 54ch;
+}
+
+.charter-footer-row {
+  margin-top: 36px;
+}
+
+.charter-footer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 24px;
+}
+
+@media (max-width: 1020px) {
+  .charter-mosaic {
+    grid-template-columns: 1fr;
+  }
+  .charter-tabs-row,
+  .charter-row {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .charter-tabs-spacer {
+    display: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .charter-photo-tile {
+    aspect-ratio: 4 / 3;
+  }
+  .charter-photo-inset {
+    position: static;
+    width: 100%;
+    padding: 18px 0 0;
+  }
+  .charter-row:nth-child(even) {
+    padding-inline: 16px;
+    margin-inline: -16px;
+  }
+}

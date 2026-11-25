@@ -4,6 +4,7 @@ import PageHeading from '../components/PageHeading.jsx';
 import FormField from '../components/FormField.jsx';
 import MembershipCard from '../components/MembershipCard.jsx';
 import { states } from '../data/states.js';
+import '../home/membership/membership.css';
 import {
   applicationEmail,
   applicationRows,
@@ -73,7 +74,7 @@ export default function MembershipPage({ embedded = false }) {
     <>
       <section id="join" className="pad route-section">
         <div className="wrap">
-          <div className="sec-head rv">
+          <div className="axis-row sec-head rv">
             <PageHeading embedded={embedded}>Join the movement.</PageHeading>
             <p className="lede">
               Be part of a collective voice for advocates’ welfare, professional dignity and

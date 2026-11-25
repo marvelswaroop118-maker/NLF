@@ -2,10 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App.jsx';
-import './website/styles/base.css';
-import './website/styles/refinements.css';
-import './website/styles/react.css';
-import './website/styles/pages.css';
+import './website/styles/editorial.css';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
