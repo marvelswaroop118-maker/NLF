@@ -44,9 +44,13 @@ function ValueIcon({ kind }) {
 }
 
 export default function Structure({ embedded = false }) {
-  const { active, tabProps, panelProps } = useAccessibleTabs('structure', { vertical: true });
+  const { active, setActive, tabProps, panelProps } = useAccessibleTabs('structure', {
+    vertical: true,
+  });
   const [revealed, setRevealed] = useState(false);
+  const [inView, setInView] = useState(false);
   const sectionRef = useRef(null);
+  const manualRef = useRef(false);
   const Subheading = embedded ? 'h3' : 'h2';
 
   useEffect(() => {
@@ -54,20 +58,83 @@ export default function Structure({ embedded = false }) {
     if (!el) return undefined;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       setRevealed(true);
+      setInView(true);
       return undefined;
     }
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries.some((entry) => entry.isIntersecting)) {
-          setRevealed(true);
-          observer.disconnect();
-        }
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setRevealed(true);
+          setInView(entry.isIntersecting);
+        });
       },
-      { threshold: 0.08 },
+      { threshold: 0.1 },
     );
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
+
+  // Desktop embedded scroll-scrub walks through all 4 pyramid tiers before releasing to the next section.
+  useEffect(() => {
+    if (!embedded) return undefined;
+    const mobileOrReduced = window.matchMedia(
+      '(prefers-reduced-motion: reduce), (max-width: 760px)',
+    );
+    let rafId = 0;
+
+    const paint = () => {
+      if (mobileOrReduced.matches || manualRef.current || !sectionRef.current) return;
+      const bounds = sectionRef.current.getBoundingClientRect();
+      if (bounds.top > 0 || bounds.bottom < window.innerHeight) return;
+      const scrollable = bounds.height - window.innerHeight;
+      if (scrollable <= 0) return;
+      const progress = Math.max(0, Math.min(1, -bounds.top / scrollable));
+      setActive(Math.min(content.tiers.length - 1, Math.floor(progress * content.tiers.length)));
+    };
+
+    const schedule = () => {
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(paint);
+    };
+
+    const resumeScroll = () => {
+      manualRef.current = false;
+    };
+
+    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('wheel', resumeScroll, { passive: true });
+    window.addEventListener('touchstart', resumeScroll, { passive: true });
+    return () => {
+      cancelAnimationFrame(rafId);
+      window.removeEventListener('scroll', schedule);
+      window.removeEventListener('wheel', resumeScroll);
+      window.removeEventListener('touchstart', resumeScroll);
+    };
+  }, [embedded, setActive]);
+
+  // On mobile or standalone route (not pinned), cycle cleanly through tiers when in view until tapped.
+  useEffect(() => {
+    if (!inView || manualRef.current) return undefined;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const desktopPinned = embedded && window.matchMedia('(min-width: 761px)').matches;
+    if (reduced || desktopPinned) return undefined;
+
+    const timer = window.setInterval(() => {
+      if (!manualRef.current) {
+        setActive((prev) => (prev + 1) % content.tiers.length);
+      }
+    }, 3400);
+
+    return () => window.clearInterval(timer);
+  }, [embedded, inView, setActive]);
+
+  const handleTierInteract = (index, originalHandler) => (event) => {
+    manualRef.current = true;
+    originalHandler?.(event);
+    if (typeof index === 'number') {
+      setActive(index);
+    }
+  };
 
   const currentTier = content.tiers[active] || content.tiers[0];
 
@@ -79,154 +146,158 @@ export default function Structure({ embedded = false }) {
         embedded ? '' : ' structure-standalone'
       }`}
     >
-      <div className="structure-ambient-bg" aria-hidden="true">
-        <div className="structure-warm-wash" />
-        <svg
-          className="structure-silk-arcs structure-silk-arcs-bl"
-          viewBox="0 0 600 420"
-          fill="none"
-          preserveAspectRatio="none"
-        >
-          <path
-            d="M-60 410C120 350 280 270 380 120C430 46 490 -20 580 -40"
-            stroke="currentColor"
-            strokeWidth="1.2"
-          />
-          <path
-            d="M-90 360C110 315 260 220 350 70"
-            stroke="currentColor"
-            strokeWidth="0.9"
-            opacity="0.6"
-          />
-        </svg>
-        <svg
-          className="structure-silk-arcs structure-silk-arcs-tr"
-          viewBox="0 0 520 380"
-          fill="none"
-          preserveAspectRatio="none"
-        >
-          <path
-            d="M110 -30C210 90 340 165 550 185"
-            stroke="currentColor"
-            strokeWidth="1.1"
-            opacity="0.48"
-          />
-          <path
-            d="M210 -40C295 65 400 120 550 132"
-            stroke="currentColor"
-            strokeWidth="0.85"
-            opacity="0.34"
-          />
-        </svg>
-      </div>
-
-      <div className="wrap structure-inner">
-        <div className="structure-header">
-          <div className="structure-title-col">
-            <PageHeading embedded={embedded}>{content.title}</PageHeading>
-            <div className="structure-accent-rule" aria-hidden="true" />
-          </div>
-
-          <div className="structure-lead-col">
-            <p className="lede">{content.description}</p>
-            <SweepButton to={content.cta.to}>{content.cta.label}</SweepButton>
-          </div>
+      <div className="structure-pin">
+        <div className="structure-ambient-bg" aria-hidden="true">
+          <div className="structure-warm-wash" />
+          <svg
+            className="structure-silk-arcs structure-silk-arcs-bl"
+            viewBox="0 0 600 420"
+            fill="none"
+            preserveAspectRatio="none"
+          >
+            <path
+              d="M-60 410C120 350 280 270 380 120C430 46 490 -20 580 -40"
+              stroke="currentColor"
+              strokeWidth="1.2"
+            />
+            <path
+              d="M-90 360C110 315 260 220 350 70"
+              stroke="currentColor"
+              strokeWidth="0.9"
+              opacity="0.6"
+            />
+          </svg>
+          <svg
+            className="structure-silk-arcs structure-silk-arcs-tr"
+            viewBox="0 0 520 380"
+            fill="none"
+            preserveAspectRatio="none"
+          >
+            <path
+              d="M110 -30C210 90 340 165 550 185"
+              stroke="currentColor"
+              strokeWidth="1.1"
+              opacity="0.48"
+            />
+            <path
+              d="M210 -40C295 65 400 120 550 132"
+              stroke="currentColor"
+              strokeWidth="0.85"
+              opacity="0.34"
+            />
+          </svg>
         </div>
 
-        <div className="structure-stage">
-          <div className="structure-pyramid-wrap">
-            <div className="structure-spine" aria-hidden="true">
-              <span className="structure-spine-line" />
-              <span className="structure-spine-label">Representation flows upward</span>
+        <div className="wrap structure-inner">
+          <div className="structure-header">
+            <div className="structure-title-col">
+              <PageHeading embedded={embedded}>{content.title}</PageHeading>
+              <div className="structure-accent-rule" aria-hidden="true" />
             </div>
 
-            <div
-              className="structure-pyramid"
-              role="tablist"
-              aria-label="Organisational levels"
-              aria-orientation="vertical"
-            >
+            <div className="structure-lead-col">
+              <p className="lede">{content.description}</p>
+              <SweepButton to={content.cta.to}>{content.cta.label}</SweepButton>
+            </div>
+          </div>
+
+          <div className="structure-stage">
+            <div className="structure-pyramid-wrap">
+              <div className="structure-spine" aria-hidden="true">
+                <span className="structure-spine-line" />
+                <span className="structure-spine-label">Representation flows upward</span>
+              </div>
+
+              <div
+                className="structure-pyramid"
+                role="tablist"
+                aria-label="Organisational levels"
+                aria-orientation="vertical"
+                onKeyDown={handleTierInteract()}
+              >
+                {content.tiers.map((item, index) => {
+                  const props = tabProps(index, 'structure-tier');
+                  const isSelected = active === index;
+                  return (
+                    <button
+                      key={item.name}
+                      {...props}
+                      className={`${props.className}${isSelected ? ' is-active' : ''}`}
+                      style={{
+                        '--tier-w': item.width,
+                        '--tier-delay': `${index * 60}ms`,
+                      }}
+                      onClick={handleTierInteract(index, props.onClick)}
+                    >
+                      <span className="structure-tier-top">
+                        <small>{item.tier}</small>
+                        <span className="structure-tier-num">{item.num}</span>
+                      </span>
+                      <b>{item.name}</b>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="structure-detail-panel">
               {content.tiers.map((item, index) => {
-                const props = tabProps(index, 'structure-tier');
-                const isSelected = active === index;
+                const panel = panelProps(index, 'structure-detail-card');
+                const isCurrent = active === index;
                 return (
-                  <button
+                  <div
                     key={item.name}
-                    {...props}
-                    className={`${props.className}${isSelected ? ' is-active' : ''}`}
-                    style={{
-                      '--tier-w': item.width,
-                      '--tier-delay': `${index * 60}ms`,
-                    }}
+                    {...panel}
+                    className={`${panel.className}${isCurrent ? ' is-current' : ''}`}
                   >
-                    <span className="structure-tier-top">
-                      <small>{item.tier}</small>
-                      <span className="structure-tier-num">{item.num}</span>
-                    </span>
-                    <b>{item.name}</b>
-                  </button>
+                    <div className="structure-detail-kicker">
+                      <span>{item.tier}</span>
+                      <span className="structure-detail-dot" aria-hidden="true" />
+                      <span>{item.scope}</span>
+                    </div>
+
+                    <Subheading>{item.headline}</Subheading>
+                    <p className="structure-detail-body">{item.body}</p>
+
+                    <div className="structure-escalation" aria-label="Upward representation flow">
+                      <span className="structure-escalation-title">Escalation path</span>
+                      <ol className="structure-chain">
+                        {content.chainLabel.map((label, chainIdx) => {
+                          const isNodeCurrent = currentTier.chainIndex === chainIdx;
+                          const isNodePassed = chainIdx <= currentTier.chainIndex;
+                          return (
+                            <li
+                              key={label}
+                              className={`${isNodeCurrent ? 'is-current' : ''}${
+                                isNodePassed ? ' is-reached' : ''
+                              }`.trim()}
+                            >
+                              <span>{label}</span>
+                            </li>
+                          );
+                        })}
+                      </ol>
+                    </div>
+                  </div>
                 );
               })}
             </div>
           </div>
 
-          <div className="structure-detail-panel">
-            {content.tiers.map((item, index) => {
-              const panel = panelProps(index, 'structure-detail-card');
-              const isCurrent = active === index;
-              return (
-                <div
-                  key={item.name}
-                  {...panel}
-                  className={`${panel.className}${isCurrent ? ' is-current' : ''}`}
-                >
-                  <div className="structure-detail-kicker">
-                    <span>{item.tier}</span>
-                    <span className="structure-detail-dot" aria-hidden="true" />
-                    <span>{item.scope}</span>
-                  </div>
-
-                  <Subheading>{item.headline}</Subheading>
-                  <p className="structure-detail-body">{item.body}</p>
-
-                  <div className="structure-escalation" aria-label="Upward representation flow">
-                    <span className="structure-escalation-title">Escalation path</span>
-                    <ol className="structure-chain">
-                      {content.chainLabel.map((label, chainIdx) => {
-                        const isNodeCurrent = currentTier.chainIndex === chainIdx;
-                        const isNodePassed = chainIdx <= currentTier.chainIndex;
-                        return (
-                          <li
-                            key={label}
-                            className={`${isNodeCurrent ? 'is-current' : ''}${
-                              isNodePassed ? ' is-reached' : ''
-                            }`.trim()}
-                          >
-                            <span>{label}</span>
-                          </li>
-                        );
-                      })}
-                    </ol>
-                  </div>
-                </div>
-              );
-            })}
+          <div className="structure-values" aria-label={content.valuesHeading}>
+            {content.values.map((val, i) => (
+              <div
+                className="structure-value"
+                key={val.label}
+                style={{ '--val-delay': `${180 + i * 50}ms` }}
+              >
+                <span className="structure-value-icon">
+                  <ValueIcon kind={val.icon} />
+                </span>
+                <p>{val.label}</p>
+              </div>
+            ))}
           </div>
-        </div>
-
-        <div className="structure-values" aria-label={content.valuesHeading}>
-          {content.values.map((val, i) => (
-            <div
-              className="structure-value"
-              key={val.label}
-              style={{ '--val-delay': `${180 + i * 50}ms` }}
-            >
-              <span className="structure-value-icon">
-                <ValueIcon kind={val.icon} />
-              </span>
-              <p>{val.label}</p>
-            </div>
-          ))}
         </div>
       </div>
     </section>
