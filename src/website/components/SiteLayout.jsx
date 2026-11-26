@@ -80,7 +80,7 @@ export default function SiteLayout() {
   }, []);
   useEffect(() => {
     main.current.inert = open;
-    footer.current.inert = open;
+    if (footer.current) footer.current.inert = open;
     document.body.style.overflow = open ? 'hidden' : '';
     if (open) sheet.current.querySelector('a')?.focus();
     const onKey = (event) => {
@@ -225,92 +225,95 @@ export default function SiteLayout() {
         <Breadcrumbs />
         <Outlet />
       </main>
-      <footer ref={footer} id="contact-footer">
-        <div className="wrap">
-          <div className="big-cta rv">
-            <h2>
-              For a stronger and <em>united</em> legal fraternity.
-            </h2>
-            <Link to="/membership" className="btn btn-gold">
-              Apply for Membership
-            </Link>
-          </div>
-          {location.pathname !== '/contact' && <ContactDetails />}
-          <div className="footer-sitemap">
-            <div>
-              <Link to="/" className="footer-brand">
-                National Lawyers
-                <br />
-                Federation
+      {location.pathname !== '/' && (
+        <footer ref={footer} id="contact-footer">
+          <div className="wrap">
+            <div className="big-cta rv">
+              <h2>
+                For a stronger and <em>united</em> legal fraternity.
+              </h2>
+              <Link to="/membership" className="btn btn-gold">
+                Apply for Membership
               </Link>
-              <p>
-                A collective platform for the welfare, dignity, protection and rights of advocates.
-              </p>
-              <a
-                className="text-link"
-                href={federation.whatsappGroup}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Connect on WhatsApp
-              </a>
             </div>
-            <div>
-              <h3>The federation</h3>
-              {sitePages
-                .filter((page) =>
-                  [
-                    '/charter',
-                    '/working-principle',
-                    '/structure',
-                    '/leadership',
-                    '/resources',
-                  ].includes(page.path),
-                )
-                .map((page) => (
-                  <Link key={page.path} to={page.path}>
-                    {page.title}
-                  </Link>
-                ))}
+            {location.pathname !== '/contact' && <ContactDetails />}
+            <div className="footer-sitemap">
+              <div>
+                <Link to="/" className="footer-brand">
+                  National Lawyers
+                  <br />
+                  Federation
+                </Link>
+                <p>
+                  A collective platform for the welfare, dignity, protection and rights of
+                  advocates.
+                </p>
+                <a
+                  className="text-link"
+                  href={federation.whatsappGroup}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Connect on WhatsApp
+                </a>
+              </div>
+              <div>
+                <h3>The federation</h3>
+                {sitePages
+                  .filter((page) =>
+                    [
+                      '/charter',
+                      '/working-principle',
+                      '/structure',
+                      '/leadership',
+                      '/resources',
+                    ].includes(page.path),
+                  )
+                  .map((page) => (
+                    <Link key={page.path} to={page.path}>
+                      {page.title}
+                    </Link>
+                  ))}
+              </div>
+              <div>
+                <h3>For advocates</h3>
+                {sitePages
+                  .filter((page) =>
+                    ['/membership', '/welfare', '/grievances', '/learning', '/directory'].includes(
+                      page.path,
+                    ),
+                  )
+                  .map((page) => (
+                    <Link key={page.path} to={page.path}>
+                      {page.title}
+                    </Link>
+                  ))}
+              </div>
+              <div>
+                <h3>Stay connected</h3>
+                {sitePages
+                  .filter((page) => ['/community', '/portal', '/contact'].includes(page.path))
+                  .map((page) => (
+                    <Link key={page.path} to={page.path}>
+                      {page.title}
+                    </Link>
+                  ))}
+              </div>
             </div>
-            <div>
-              <h3>For advocates</h3>
-              {sitePages
-                .filter((page) =>
-                  ['/membership', '/welfare', '/grievances', '/learning', '/directory'].includes(
-                    page.path,
-                  ),
-                )
-                .map((page) => (
-                  <Link key={page.path} to={page.path}>
-                    {page.title}
-                  </Link>
-                ))}
-            </div>
-            <div>
-              <h3>Stay connected</h3>
-              {sitePages
-                .filter((page) => ['/community', '/portal', '/contact'].includes(page.path))
-                .map((page) => (
-                  <Link key={page.path} to={page.path}>
-                    {page.title}
-                  </Link>
-                ))}
+            <div className="fbot">
+              <span>
+                © {new Date().getFullYear()} National Lawyers Federation (NLF). Unity · Welfare ·
+                Dignity · Protection.
+              </span>
+              <span className="quick">
+                <Link to="/charter">Constitutional objects</Link>
+                <Link to="/grievances">Grievance &amp; Protection</Link>
+                <Link to="/contact">Contact</Link>
+              </span>
             </div>
           </div>
-          <div className="fbot">
-            <span>
-              © {new Date().getFullYear()} National Lawyers Federation (NLF). Unity · Welfare ·
-              Dignity · Protection.
-            </span>
-            <span className="quick">
-              <Link to="/charter">Constitutional objects</Link>
-              <Link to="/grievances">Grievance &amp; Protection</Link>
-              <Link to="/contact">Contact</Link>
-            </span>
-          </div>
-        </div>
-      </footer>
+        </footer>
+      )}
       <button
         type="button"
         className={`back-top ${progress > 0.1 ? 'visible' : ''}`}

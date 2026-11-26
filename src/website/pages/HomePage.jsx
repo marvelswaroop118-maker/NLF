@@ -1,12 +1,13 @@
 import Hero from '../home/hero/Hero.jsx';
+import HomeFooter from '../home/footer/HomeFooter.jsx';
 import FounderPortrait from '../components/FounderPortrait.jsx';
-import CommunityCallout from '../components/CommunityCallout.jsx';
 import { Link } from 'react-router-dom';
 import CharterPage from './CharterPage.jsx';
 import PrinciplePage from './PrinciplePage.jsx';
 import StructurePage from './StructurePage.jsx';
 import MembershipPage from './MembershipPage.jsx';
 import PortalPage from './PortalPage.jsx';
+
 export default function HomePage() {
   return (
     <>
@@ -40,11 +41,9 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-      <MembershipPage embedded />
       <PortalPage embedded />
-      <div className="wrap">
-        <CommunityCallout />
-      </div>
+      <MembershipPage embedded />
+      <HomeFooter />
     </>
   );
 }
