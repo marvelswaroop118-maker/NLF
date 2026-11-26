@@ -1,22 +1,10 @@
 export const heroContent = {
-  heading: 'United for every',
-  headingLine2: 'advocate in India.',
+  motto: 'UNITY · WELFARE · DIGNITY · PROTECTION',
+  headingLine1: 'A stronger, united',
+  headingLine2: 'voice for every',
+  headingAccent: 'advocate.',
   description:
-    'An independent federation advancing advocate welfare, safer courts, chambers, and democratic Bar representation nationwide.',
-  primaryAction: { to: '/membership', label: 'Apply for membership' },
-  secondaryAction: { to: '/resources', label: 'Read the brochure' },
-  plates: [
-    {
-      to: '/resources',
-      title: 'Founding Brochure',
-      imageKey: 'brochure',
-      alt: 'Cover of the official National Lawyers Federation founding prospectus',
-    },
-    {
-      to: '/leadership',
-      title: 'Founder President',
-      imageKey: 'founder',
-      alt: 'Portrait of Chittem Venkata Reddy, Advocate, High Court',
-    },
-  ],
+    'An independent, advocate-centred federation working for the welfare, dignity, safety and rights of the legal fraternity.',
+  primaryAction: { to: '/membership', label: 'Become a Member' },
+  secondaryAction: { to: '/charter', label: 'Explore our mandate' },
 };

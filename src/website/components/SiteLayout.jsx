@@ -1,25 +1,30 @@
 import Breadcrumbs from './Breadcrumbs.jsx';
-import Navbar from './Navbar.jsx';
-import { sitePages, getSitePage } from '../data/site.js';
+import { sitePages, primaryPaths, getSitePage } from '../data/site.js';
 import { federation } from '../../shared/config.js';
 import { useEffect, useRef, useState } from 'react';
-import { Link, Outlet, useLocation } from 'react-router-dom';
+import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
+import ContactDetails from './ContactDetails.jsx';
 
 export default function SiteLayout() {
+  const links = sitePages
+    .filter((page) => primaryPaths.includes(page.path))
+    .map((page) => [page.path, page.title]);
+  const explore = useRef(null);
   const [open, setOpen] = useState(false);
-  const [showTop, setShowTop] = useState(false);
-  const showTopRef = useRef(false);
-  const main = useRef(null);
-  const footer = useRef(null);
-  const burger = useRef(null);
+  const [progress, setProgress] = useState(0);
+  const [scrolled, setScrolled] = useState(false);
+  const main = useRef(null),
+    footer = useRef(null),
+    burger = useRef(null),
+    sheet = useRef(null);
   const location = useLocation();
   const firstRender = useRef(true);
-
   useEffect(() => {
     setOpen(false);
     window.scrollTo({ top: 0, behavior: 'instant' });
     if (!firstRender.current) main.current?.focus({ preventScroll: true });
     firstRender.current = false;
+    if (explore.current) explore.current.open = false;
     const page = getSitePage(location.pathname);
     document.title = `${page?.title || 'Page not found'} | National Lawyers Federation`;
     for (const selector of ['meta[name="description"]', 'meta[property="og:description"]']) {
@@ -28,7 +33,6 @@ export default function SiteLayout() {
         ?.setAttribute('content', page?.description || 'Explore the National Lawyers Federation.');
     }
     document.querySelector('meta[property="og:title"]')?.setAttribute('content', document.title);
-
     const observer = new IntersectionObserver(
       (entries) =>
         entries.forEach(({ target, isIntersecting }) => {
@@ -38,39 +42,62 @@ export default function SiteLayout() {
             !matchMedia('(prefers-reduced-motion: reduce)').matches &&
             target.classList.contains('rv')
           ) {
-            const parts = target.children.length ? [...target.children] : [target];
-            parts.slice(0, 6).forEach((part, index) => {
-              part.animate(
-                [
-                  { opacity: 0.78, transform: 'translateY(16px)' },
-                  { opacity: 1, transform: 'none' },
-                ],
-                {
-                  duration: 680,
-                  delay: index * 70,
-                  easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
-                  fill: 'both',
-                },
-              );
-            });
+            target.animate(
+              [
+                { opacity: 0.35, transform: 'translateY(20px)' },
+                { opacity: 1, transform: 'none' },
+              ],
+              { duration: 650, easing: 'cubic-bezier(0.23, 1, 0.32, 1)' },
+            );
           }
           observer.unobserve(target);
         }),
-      { threshold: 0.06 },
+      { threshold: 0.08 },
     );
-    document.querySelectorAll('.rv').forEach((element) => observer.observe(element));
+    document.querySelectorAll('.rv, .hair, .win').forEach((element) => observer.observe(element));
     return () => observer.disconnect();
   }, [location.pathname]);
-
   useEffect(() => {
-    if (main.current) main.current.inert = open;
-    if (footer.current) footer.current.inert = open;
+    let frame;
+    const paint = () => {
+      const range = document.documentElement.scrollHeight - innerHeight;
+      setProgress(range > 0 ? scrollY / range : 0);
+      setScrolled(scrollY > 24);
+    };
+    const schedule = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(paint);
+    };
+    const resize = new ResizeObserver(schedule);
+    resize.observe(document.body);
+    addEventListener('scroll', schedule, { passive: true });
+    paint();
+    return () => {
+      cancelAnimationFrame(frame);
+      removeEventListener('scroll', schedule);
+      resize.disconnect();
+    };
+  }, []);
+  useEffect(() => {
+    main.current.inert = open;
+    footer.current.inert = open;
     document.body.style.overflow = open ? 'hidden' : '';
+    if (open) sheet.current.querySelector('a')?.focus();
     const onKey = (event) => {
       if (!open) return;
       if (event.key === 'Escape') {
         setOpen(false);
-        burger.current?.focus();
+        burger.current.focus();
+        return;
+      }
+      if (event.key !== 'Tab') return;
+      const items = [burger.current, ...sheet.current.querySelectorAll('a')];
+      if (event.shiftKey && document.activeElement === items[0]) {
+        event.preventDefault();
+        items.at(-1).focus();
+      } else if (!event.shiftKey && document.activeElement === items.at(-1)) {
+        event.preventDefault();
+        items[0].focus();
       }
     };
     document.addEventListener('keydown', onKey);
@@ -79,37 +106,116 @@ export default function SiteLayout() {
       document.body.style.overflow = '';
     };
   }, [open]);
-
   useEffect(() => {
-    const desktop = matchMedia('(min-width: 1021px)');
+    const desktop = matchMedia('(min-width: 1121px)');
     const close = (event) => {
       if (event.matches) setOpen(false);
     };
     desktop.addEventListener('change', close);
     return () => desktop.removeEventListener('change', close);
   }, []);
-
   useEffect(() => {
-    const onScroll = () => {
-      const isVisible = window.scrollY > 360;
-      if (isVisible !== showTopRef.current) {
-        showTopRef.current = isVisible;
-        setShowTop(isVisible);
+    const dismiss = (event) => {
+      if (explore.current?.open && !explore.current.contains(event.target))
+        explore.current.open = false;
+    };
+    const escape = (event) => {
+      if (event.key === 'Escape' && explore.current?.open) {
+        explore.current.open = false;
+        explore.current.querySelector('summary').focus();
       }
     };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener('scroll', onScroll);
+    document.addEventListener('pointerdown', dismiss);
+    document.addEventListener('keydown', escape);
+    return () => {
+      document.removeEventListener('pointerdown', dismiss);
+      document.removeEventListener('keydown', escape);
+    };
   }, []);
-
-  const [emailLocal, emailDomain] = federation.email.split('@');
-
+  const closeMenu = () => {
+    setOpen(false);
+    burger.current?.focus();
+  };
   return (
     <div className={open ? 'site-shell menu-open' : 'site-shell'}>
       <a className="skip-link" href="#main-content">
         Skip to content
       </a>
-      <Navbar open={open} setOpen={setOpen} burgerRef={burger} />
+      <div id="bar" aria-hidden="true" style={{ transform: `scaleX(${progress})` }} />
+      <nav
+        id="nav"
+        className={[
+          scrolled ? 'stuck' : '',
+          location.pathname === '/' && !scrolled && !open ? 'hero-top' : '',
+        ]
+          .filter(Boolean)
+          .join(' ')}
+        aria-label="Primary"
+      >
+        <div className="wrap">
+          <Link to="/" className="brand" aria-label="National Lawyers Federation home">
+            <div className="crest" aria-hidden="true" />
+            <span>
+              NATIONAL LAWYERS
+              <br />
+              FEDERATION
+            </span>
+          </Link>
+          <div className="links">
+            {links.map(([to, label]) => (
+              <NavLink key={to} to={to} className={({ isActive }) => (isActive ? 'on' : '')}>
+                {label}
+              </NavLink>
+            ))}
+            <details className="explore-menu" ref={explore}>
+              <summary>Explore</summary>
+              <div className="explore-popover">
+                {sitePages
+                  .filter((page) => page.path !== '/')
+                  .map((page) => (
+                    <Link key={page.path} to={page.path}>
+                      {page.title}
+                    </Link>
+                  ))}
+              </div>
+            </details>
+          </div>
+          <div className="cta">
+            <Link to="/membership" className="btn btn-solid">
+              Join NLF
+            </Link>
+            <button
+              ref={burger}
+              type="button"
+              className="burger"
+              aria-label={open ? 'Close navigation' : 'Open navigation'}
+              aria-expanded={open}
+              aria-controls="mobile-navigation"
+              onClick={() => setOpen(!open)}
+            >
+              <i />
+            </button>
+          </div>
+        </div>
+      </nav>
+      <div
+        className="sheet"
+        id="mobile-navigation"
+        ref={sheet}
+        inert={!open}
+        aria-label="Mobile navigation"
+      >
+        {sitePages
+          .filter((page) => !['/', '/membership'].includes(page.path))
+          .map((page) => (
+            <Link key={page.path} to={page.path} className="l" onClick={closeMenu}>
+              {page.title}
+            </Link>
+          ))}
+        <Link to="/membership" className="btn btn-solid" onClick={closeMenu}>
+          Join NLF
+        </Link>
+      </div>
       <main
         ref={main}
         id="main-content"
@@ -119,56 +225,36 @@ export default function SiteLayout() {
         <Breadcrumbs />
         <Outlet />
       </main>
-      <footer ref={footer} id="contact-footer" className="site-footer">
+      <footer ref={footer} id="contact-footer">
         <div className="wrap">
-          <div className="footer-top">
-            <div className="footer-notes">
-              <div>
-                <strong>National Lawyers Federation</strong>
-                <p>Founder President: {federation.founder}, Advocate, High Court</p>
-              </div>
-              <div>
-                <strong>Telephone &amp; Grievance Desk</strong>
-                <p>
-                  <a href={`tel:${federation.phone}`}>{federation.displayPhone}</a>
-                </p>
-              </div>
-              <div>
-                <strong>Federation Brochure</strong>
-                <p>
-                  <a href={federation.brochure} target="_blank" rel="noopener noreferrer">
-                    Download PDF prospectus
-                  </a>
-                </p>
-              </div>
-            </div>
-            <button
-              type="button"
-              className="footer-top-link"
-              onClick={() => {
-                window.scrollTo({
-                  top: 0,
-                  behavior: matchMedia('(prefers-reduced-motion: reduce)').matches
-                    ? 'instant'
-                    : 'smooth',
-                });
-                main.current?.focus({ preventScroll: true });
-              }}
-            >
-              Back to top ↑
-            </button>
+          <div className="big-cta rv">
+            <h2>
+              For a stronger and <em>united</em> legal fraternity.
+            </h2>
+            <Link to="/membership" className="btn btn-gold">
+              Apply for Membership
+            </Link>
           </div>
-
-          <a
-            href={`mailto:${federation.email}`}
-            className="footer-email-display"
-            aria-label={`Email ${federation.email}`}
-          >
-            {emailLocal}
-            <span>@{emailDomain}</span>
-          </a>
-
-          <div className="footer-columns">
+          {location.pathname !== '/contact' && <ContactDetails />}
+          <div className="footer-sitemap">
+            <div>
+              <Link to="/" className="footer-brand">
+                National Lawyers
+                <br />
+                Federation
+              </Link>
+              <p>
+                A collective platform for the welfare, dignity, protection and rights of advocates.
+              </p>
+              <a
+                className="text-link"
+                href={federation.whatsappGroup}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Connect on WhatsApp
+              </a>
+            </div>
             <div>
               <h3>The federation</h3>
               {sitePages
@@ -210,90 +296,40 @@ export default function SiteLayout() {
                     {page.title}
                   </Link>
                 ))}
-              <a href={federation.whatsappGroup} target="_blank" rel="noopener noreferrer">
-                WhatsApp Community
-              </a>
             </div>
           </div>
-
-          <div className="footer-meta">
-            <p>
-              © {new Date().getFullYear()} National Lawyers Federation (NLF). Unity, Welfare,
-              Dignity and Protection across India.
-            </p>
-            <p>
-              Pictures:{' '}
-              <a
-                href="https://commons.wikimedia.org/wiki/File:Supreme_Court_of_India_01.jpg"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                “Supreme Court of India 01”
-              </a>{' '}
-              by Subhashish Panigrahi (CC BY-SA 4.0);{' '}
-              <a
-                href="https://commons.wikimedia.org/wiki/File:High_Court_Of_Telangana_State_(89002).jpg"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                “High Court Of Telangana State (89002)”
-              </a>{' '}
-              and{' '}
-              <a
-                href="https://commons.wikimedia.org/wiki/File:High_Court_Of_Telangana_State_(73051).jpg"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                “(73051)”
-              </a>{' '}
-              by Kavali Chandrakanth KCK (CC BY-SA 4.0);{' '}
-              <a
-                href="https://commons.wikimedia.org/wiki/File:Calcutta_High_Court_-_01.jpg"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                “Calcutta High Court - 01”
-              </a>{' '}
-              by Indrajit Das (CC BY-SA 4.0);{' '}
-              <a
-                href="https://commons.wikimedia.org/wiki/File:Chennai_High_Court.jpg"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                “Chennai High Court”
-              </a>{' '}
-              by Yoga Balaji (CC BY 3.0);{' '}
-              <a
-                href="https://commons.wikimedia.org/wiki/File:Indiana_Supreme_Court_Law_Library_rare_books_shelf.jpg"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                “Indiana Supreme Court Law Library rare books shelf”
-              </a>{' '}
-              by Dominic (CC0), via Wikimedia Commons.
-            </p>
+          <div className="fbot">
+            <span>
+              © {new Date().getFullYear()} National Lawyers Federation (NLF). Unity · Welfare ·
+              Dignity · Protection.
+            </span>
+            <span className="quick">
+              <Link to="/charter">Constitutional objects</Link>
+              <Link to="/grievances">Grievance &amp; Protection</Link>
+              <Link to="/contact">Contact</Link>
+            </span>
           </div>
         </div>
       </footer>
       <button
         type="button"
-        className={`back-top ${showTop ? 'visible' : ''}`}
+        className={`back-top ${progress > 0.1 ? 'visible' : ''}`}
         hidden={open}
-        tabIndex={showTop ? 0 : -1}
+        tabIndex={progress > 0.1 ? 0 : -1}
         aria-label="Back to top"
         onClick={() => {
           window.scrollTo({
             top: 0,
             behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
           });
-          main.current?.focus({ preventScroll: true });
+          main.current.focus({ preventScroll: true });
         }}
       >
         <svg
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
-          strokeWidth="1.75"
+          strokeWidth="1.5"
           aria-hidden="true"
         >
           <path d="m6 14 6-6 6 6M12 8v12" />

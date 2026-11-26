@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import RelatedPages from '../components/RelatedPages.jsx';
 import Principle from '../home/principle/Principle.jsx';
+
 export default function PrinciplePage({ embedded = false }) {
   return (
     <>
@@ -26,7 +27,24 @@ export default function PrinciplePage({ embedded = false }) {
                   </p>
                 </div>
               </div>
-
+              <ol className="process-notes">
+                <li>
+                  <h3>Identify</h3>
+                  <p>Start with the concern, the people affected and the relevant facts.</p>
+                </li>
+                <li>
+                  <h3>Represent</h3>
+                  <p>Make clear which authority or professional body the issue concerns.</p>
+                </li>
+                <li>
+                  <h3>Follow-up</h3>
+                  <p>Keep previous correspondence and the current position together.</p>
+                </li>
+                <li>
+                  <h3>Resolve</h3>
+                  <p>Record the outcome and any clarification still needed.</p>
+                </li>
+              </ol>
               <div className="actions">
                 <Link className="btn btn-solid" to="/grievances">
                   Prepare a representation
