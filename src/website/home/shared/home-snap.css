@@ -1,0 +1,109 @@
+/* Crisp 100svh slide fitting & mandatory desktop page snapping on Home */
+
+@media (min-width: 761px) and (prefers-reduced-motion: no-preference) {
+  html.home-snap-active {
+    scroll-snap-type: y mandatory;
+    scroll-padding-top: 0;
+  }
+
+  html.home-snap-active section,
+  html.home-snap-active header,
+  html.home-snap-active footer {
+    scroll-margin-top: 0;
+  }
+
+  /* Full-bleed 100svh slides so each snap target frames cleanly without bottom section peeking */
+  html.home-snap-active #aims {
+    min-height: 100svh;
+    padding-top: clamp(96px, 9.5vh, 122px);
+    padding-bottom: clamp(48px, 6vh, 72px);
+    scroll-snap-align: start;
+    scroll-snap-stop: normal;
+  }
+
+  html.home-snap-active #leadership.leadership-section {
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    padding-top: clamp(92px, 8.5vh, 114px);
+    padding-bottom: clamp(32px, 4.5vh, 52px);
+    scroll-snap-align: start;
+    scroll-snap-stop: normal;
+  }
+
+  html.home-snap-active #portal {
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    padding-block: clamp(88px, 7.5vh, 100px) clamp(20px, 3vh, 36px);
+    scroll-snap-align: start;
+    scroll-snap-stop: normal;
+  }
+
+  html.home-snap-active #portal > .wrap,
+  html.home-snap-active #join > .wrap {
+    width: 100%;
+  }
+
+  html.home-snap-active #portal .sec-head {
+    margin-bottom: clamp(12px, 2vh, 22px);
+  }
+
+  html.home-snap-active #portal .wbody {
+    min-height: clamp(360px, 44vh, 415px);
+  }
+
+  html.home-snap-active #join {
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    padding-block: clamp(78px, 8.2svh, 96px) clamp(16px, 2.2svh, 28px);
+    scroll-snap-align: start;
+    scroll-snap-stop: normal;
+  }
+
+  html.home-snap-active #join .sec-head {
+    margin-bottom: clamp(12px, 1.8svh, 20px);
+  }
+
+  html.home-snap-active #join .formcard {
+    padding: clamp(16px, 2svh, 24px) clamp(20px, 2.2vw, 28px);
+  }
+
+  html.home-snap-active #home,
+  html.home-snap-active #principle,
+  html.home-snap-active #structure,
+  html.home-snap-active #home-contact {
+    scroll-snap-align: start;
+    scroll-snap-stop: normal;
+  }
+
+  /* Bottom end-snap anchor inside variable-height panels so tall views (e.g. Objects tab / Step 2) can scroll cleanly before leaving */
+  html.home-snap-active #aims::after,
+  html.home-snap-active #portal::after,
+  html.home-snap-active #join::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 1px;
+    height: 1px;
+    pointer-events: none;
+    scroll-snap-align: end;
+  }
+
+  .home-snap-waypoint {
+    position: absolute;
+    left: 0;
+    width: 1px;
+    height: 1px;
+    pointer-events: none;
+    scroll-snap-align: start;
+  }
+}
+
+@media (max-width: 760px), (prefers-reduced-motion: reduce) {
+  .home-snap-waypoint {
+    display: none;
+  }
+}

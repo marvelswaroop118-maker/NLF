@@ -95,24 +95,25 @@ nav.stuck {
   gap: 8px;
 }
 .cta .btn {
-  padding: 10px 18px;
+  min-height: 38px;
+  padding: 8px 18px;
   font-size: 0.8125rem;
 }
 .btn {
   min-height: 48px;
-  padding: 13px 25px;
-  font-weight: 500;
+  padding: 12px 22px;
+  font-weight: 600;
   transition:
-    color 200ms ease,
-    border-color 200ms ease,
-    transform 140ms var(--ease),
-    box-shadow 200ms ease;
+    color 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 240ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 .btn::before {
-  transition-duration: 250ms;
+  transition-duration: 280ms;
 }
 .btn-gold {
-  background: var(--gold-light);
+  background: #f09d1c;
 }
 .btn-solid {
   box-shadow: 0 7px 20px -12px rgba(11, 25, 44, 0.5);
@@ -964,22 +965,6 @@ h2 {
 /* Readable metadata and explicit hover contrast across touch and desktop. */
 .track .fill {
   box-shadow: none;
-}
-.btn-solid:hover {
-  background: var(--gold);
-  color: var(--navy);
-}
-.btn-ghost:hover {
-  background: var(--navy);
-  color: #fff;
-}
-.btn-ghost-l:hover {
-  background: #fff;
-  color: var(--navy);
-}
-.btn-gold:hover {
-  background: #fff;
-  color: var(--navy);
 }
 .pp :is(h2, h3) {
   margin-top: 0;

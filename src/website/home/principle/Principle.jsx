@@ -3,6 +3,8 @@ import { useEffect, useRef, useState } from 'react';
 import PageHeading from '../../components/PageHeading.jsx';
 import { useAccessibleTabs } from '../../hooks/useAccessibleTabs.js';
 import SweepButton from '../shared/SweepButton.jsx';
+import LazyAmbientBg from '../shared/LazyAmbientBg.jsx';
+import Threads from '../shared/Threads.jsx';
 import { principleContent as content } from './principle.content.js';
 
 export default function Principle({ embedded = false }) {
@@ -104,42 +106,34 @@ export default function Principle({ embedded = false }) {
         embedded ? '' : ' principle-standalone'
       }`}
     >
+      {embedded && (
+        <>
+          <span className="home-snap-waypoint" style={{ top: '42svh' }} aria-hidden="true" />
+          <span className="home-snap-waypoint" style={{ top: '78svh' }} aria-hidden="true" />
+          <span className="home-snap-waypoint" style={{ top: '114svh' }} aria-hidden="true" />
+        </>
+      )}
       <div className="principle-pin">
         <div className="principle-ambient-bg" aria-hidden="true">
           <div className="principle-glow-wash" />
-          <svg
-            className="principle-silk-arcs principle-silk-arcs-tr"
-            viewBox="0 0 600 420"
-            fill="none"
-            preserveAspectRatio="none"
-          >
-            <path d="M120 -30C230 110 370 190 620 215" stroke="currentColor" strokeWidth="1.2" />
-            <path
-              d="M230 -40C330 85 450 140 620 155"
-              stroke="currentColor"
-              strokeWidth="0.9"
-              opacity="0.58"
+          <LazyAmbientBg>
+            <Threads
+              color="#f09d1c"
+              accentColor="#ffb338"
+              lineCount={46}
+              thickness={0.62}
+              amplitude={1.3}
+              distance={0.3}
+              speed={0.48}
+              waves={1.05}
+              fray={0.45}
+              angle={18}
+              opacity={0.36}
+              fade={0.35}
+              brightness={1.15}
+              enableMouseInteraction
             />
-          </svg>
-          <svg
-            className="principle-silk-arcs principle-silk-arcs-bl"
-            viewBox="0 0 540 380"
-            fill="none"
-            preserveAspectRatio="none"
-          >
-            <path
-              d="M-50 380C125 320 265 240 365 95"
-              stroke="currentColor"
-              strokeWidth="1.05"
-              opacity="0.5"
-            />
-            <path
-              d="M40 400C180 355 310 285 415 160"
-              stroke="currentColor"
-              strokeWidth="0.85"
-              opacity="0.32"
-            />
-          </svg>
+          </LazyAmbientBg>
         </div>
 
         <div className="wrap principle-inner">

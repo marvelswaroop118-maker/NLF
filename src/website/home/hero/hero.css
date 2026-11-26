@@ -150,24 +150,59 @@ nav#nav.hero-top .burger i::after {
 }
 
 .hero-btn-pill {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
+  gap: 16px;
   min-height: 48px;
-  padding: 12px 28px;
-  border-radius: 999px;
+  padding: 12px 24px;
+  border-radius: 5px;
+  border: 1px solid #f09d1c;
   background: #f09d1c;
   color: #071324;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   font-weight: 600;
+  letter-spacing: 0.01em;
   transition:
-    background-color 220ms var(--ease),
-    transform 160ms var(--ease);
+    color 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.hero-btn-pill:hover {
-  background: #ffb338;
-  transform: translateY(-1px);
+.hero-btn-pill::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: #faf9f6;
+  transform: translateX(calc(-100% + 3px));
+  transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.hero-btn-pill span:last-child {
+  transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (hover: hover) {
+  .hero-btn-pill:hover::before {
+    transform: translateX(0);
+  }
+
+  .hero-btn-pill:hover {
+    color: #071324;
+    border-color: #faf9f6;
+  }
+
+  .hero-btn-pill:hover span:last-child {
+    transform: translateX(4px);
+  }
+}
+
+.hero-btn-pill:active {
+  transform: translateY(1px);
 }
 
 .hero-link-subtle {

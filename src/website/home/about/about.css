@@ -14,7 +14,8 @@
 
   position: relative;
   overflow-x: clip;
-  padding-block: clamp(68px, 8.5vw, 120px);
+  padding-top: clamp(98px, 9.5vw, 128px);
+  padding-bottom: clamp(68px, 8.5vw, 112px);
   background: var(--charter-cream);
   color: var(--charter-ink);
 }

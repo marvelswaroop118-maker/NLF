@@ -183,7 +183,7 @@
 
 #principle .sweep-primary::before {
   background: #faf9f6;
-  transform: translateX(-101%);
+  transform: translateX(calc(-100% + 3px));
 }
 
 @media (hover: hover) {

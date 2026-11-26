@@ -3,6 +3,8 @@ import { useEffect, useRef, useState } from 'react';
 import PageHeading from '../../components/PageHeading.jsx';
 import { useAccessibleTabs } from '../../hooks/useAccessibleTabs.js';
 import SweepButton from '../shared/SweepButton.jsx';
+import LazyAmbientBg from '../shared/LazyAmbientBg.jsx';
+import Waves from '../shared/Waves.jsx';
 import { structureContent as content } from './structure.content.js';
 
 function ValueIcon({ kind }) {
@@ -146,46 +148,33 @@ export default function Structure({ embedded = false }) {
         embedded ? '' : ' structure-standalone'
       }`}
     >
+      {embedded && (
+        <>
+          <span className="home-snap-waypoint" style={{ top: '42svh' }} aria-hidden="true" />
+          <span className="home-snap-waypoint" style={{ top: '78svh' }} aria-hidden="true" />
+          <span className="home-snap-waypoint" style={{ top: '114svh' }} aria-hidden="true" />
+        </>
+      )}
       <div className="structure-pin">
         <div className="structure-ambient-bg" aria-hidden="true">
           <div className="structure-warm-wash" />
-          <svg
-            className="structure-silk-arcs structure-silk-arcs-bl"
-            viewBox="0 0 600 420"
-            fill="none"
-            preserveAspectRatio="none"
-          >
-            <path
-              d="M-60 410C120 350 280 270 380 120C430 46 490 -20 580 -40"
-              stroke="currentColor"
-              strokeWidth="1.2"
+          <LazyAmbientBg>
+            <Waves
+              lightMode
+              backgroundColor="transparent"
+              lineColor="#c8892c"
+              accentColor="#f09d1c"
+              spacing={36}
+              lineWidth={0.8}
+              amplitude={18}
+              speed={0.5}
+              twist={0.85}
+              rotation={10}
+              opacity={0.3}
+              fade={0.38}
+              mouseRadius={140}
             />
-            <path
-              d="M-90 360C110 315 260 220 350 70"
-              stroke="currentColor"
-              strokeWidth="0.9"
-              opacity="0.6"
-            />
-          </svg>
-          <svg
-            className="structure-silk-arcs structure-silk-arcs-tr"
-            viewBox="0 0 520 380"
-            fill="none"
-            preserveAspectRatio="none"
-          >
-            <path
-              d="M110 -30C210 90 340 165 550 185"
-              stroke="currentColor"
-              strokeWidth="1.1"
-              opacity="0.48"
-            />
-            <path
-              d="M210 -40C295 65 400 120 550 132"
-              stroke="currentColor"
-              strokeWidth="0.85"
-              opacity="0.34"
-            />
-          </svg>
+          </LazyAmbientBg>
         </div>
 
         <div className="wrap structure-inner">

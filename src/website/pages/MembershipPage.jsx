@@ -1,8 +1,11 @@
+import '../home/membership/membership.css';
 import { MembershipExtras } from '../components/StandaloneExtras.jsx';
 import { Fragment, useEffect, useRef, useState } from 'react';
 import PageHeading from '../components/PageHeading.jsx';
 import FormField from '../components/FormField.jsx';
 import MembershipCard from '../components/MembershipCard.jsx';
+import LazyAmbientBg from '../home/shared/LazyAmbientBg.jsx';
+import Waves from '../home/shared/Waves.jsx';
 import { states } from '../data/states.js';
 import {
   applicationEmail,
@@ -71,10 +74,35 @@ export default function MembershipPage({ embedded = false }) {
   );
   return (
     <>
-      <section id="join" className="pad route-section">
+      <section id="join" className={`pad route-section${embedded ? ' join-embedded' : ''}`}>
+        {embedded && (
+          <div className="join-ambient-bg" aria-hidden="true">
+            <div className="join-warm-wash" />
+            <LazyAmbientBg>
+              <Waves
+                lightMode
+                backgroundColor="transparent"
+                lineColor="#cf9032"
+                accentColor="#b86b08"
+                spacing={36}
+                lineWidth={0.8}
+                amplitude={16}
+                speed={0.45}
+                twist={0.8}
+                rotation={-6}
+                opacity={0.26}
+                fade={0.4}
+                mouseRadius={135}
+              />
+            </LazyAmbientBg>
+          </div>
+        )}
         <div className="wrap">
           <div className="sec-head rv">
-            <PageHeading embedded={embedded}>Join the movement.</PageHeading>
+            <div>
+              <PageHeading embedded={embedded}>Join the movement.</PageHeading>
+              {embedded && <div className="join-accent-rule" aria-hidden="true" />}
+            </div>
             <p className="lede">
               Be part of a collective voice for advocates’ welfare, professional dignity and
               protection. Three short steps; your illustrative NLF card takes shape as you go.

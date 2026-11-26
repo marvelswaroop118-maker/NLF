@@ -1,0 +1,312 @@
+/* Upgraded Join the Movement section ("#join") — Cream + Midnight Navy + Amber Gold editorial system */
+
+#join {
+  --m-cream: var(--canvas, #faf9f6);
+  --m-navy: #071426;
+  --m-navy-elevated: #0d213d;
+  --m-amber: #f09d1c;
+  --m-amber-ink: #c9770a;
+  --m-amber-bright: #ffb338;
+  --m-line: #e2ddd2;
+  --m-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  position: relative;
+  overflow-x: clip;
+  background: var(--m-cream);
+  border-top: 1px solid var(--m-line);
+  border-bottom: 0;
+}
+
+#join > .wrap {
+  position: relative;
+  z-index: 1;
+}
+
+.join-ambient-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.join-warm-wash {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(58% 52% at 10% 82%, rgba(240, 157, 28, 0.065) 0%, rgba(240, 157, 28, 0) 70%),
+    radial-gradient(48% 44% at 92% 18%, rgba(7, 20, 38, 0.035) 0%, rgba(7, 20, 38, 0) 68%);
+}
+
+/* Editorial Header Bar */
+#join.join-embedded .sec-head {
+  display: grid;
+  grid-template-columns: minmax(250px, 0.92fr) minmax(0, 1.08fr);
+  gap: clamp(18px, 3.5vw, 56px);
+  align-items: end;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--m-line);
+  margin-bottom: clamp(14px, 2svh, 22px);
+}
+
+#join.join-embedded .sec-head :is(h1, h2) {
+  margin: 0 0 10px;
+  font-size: clamp(2.05rem, min(3.3vw, 4.5svh), 3.1rem);
+  line-height: 0.98;
+  letter-spacing: -0.025em;
+  color: var(--m-navy);
+}
+
+@media (min-width: 960px) {
+  #join.join-embedded .sec-head :is(h1, h2) {
+    white-space: nowrap;
+  }
+}
+
+.join-accent-rule {
+  width: 64px;
+  height: 2.5px;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--m-amber), var(--m-amber-ink));
+}
+
+#join.join-embedded .sec-head .lede {
+  margin: 0;
+  max-width: 48ch;
+  font-size: 0.92rem;
+  line-height: 1.52;
+  color: var(--slate, #4a5568);
+}
+
+/* Stepped Form Card */
+#join .join {
+  display: grid;
+  grid-template-columns: 1.06fr 0.94fr;
+  gap: clamp(24px, 4vw, 56px);
+  align-items: center;
+}
+
+#join .formcard {
+  position: relative;
+  background: #ffffff;
+  border: 1px solid rgba(11, 25, 44, 0.1);
+  border-radius: 14px;
+  padding: clamp(16px, 2.2svh, 24px) clamp(20px, 2.2vw, 28px);
+  box-shadow: 0 22px 48px -28px rgba(7, 20, 38, 0.24);
+}
+
+#join .formcard::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 18px;
+  bottom: 18px;
+  width: 4px;
+  border-radius: 0 4px 4px 0;
+  background: linear-gradient(180deg, var(--m-amber-bright), var(--m-amber-ink));
+}
+
+#join .steps {
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+#join .steps i {
+  height: 3.5px;
+  background: rgba(11, 25, 44, 0.1);
+}
+
+#join .steps i::after {
+  background: linear-gradient(90deg, var(--m-amber), var(--m-amber-bright));
+}
+
+#join .stepno {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--m-amber-ink);
+}
+
+#join .fstep :is(h2, h3) {
+  font-size: clamp(1.35rem, 2.2svh, 1.65rem);
+  margin: 4px 0 12px;
+  color: var(--m-navy);
+}
+
+#join .f {
+  gap: 10px 14px;
+}
+
+#join .fld {
+  gap: 5px;
+}
+
+#join .fld label {
+  font-size: 0.78rem;
+}
+
+#join .fld input,
+#join .fld select,
+#join .fld textarea {
+  border-radius: 8px;
+  border-color: rgba(11, 25, 44, 0.16);
+  background: #faf9f6;
+  padding: 9px 13px;
+  font-size: 0.9rem;
+}
+
+#join .fld textarea {
+  min-height: 44px;
+  max-height: 56px;
+  resize: none;
+}
+
+#join .fld input:focus,
+#join .fld select:focus,
+#join .fld textarea:focus {
+  background: #ffffff;
+  border-color: var(--m-amber);
+  box-shadow: 0 0 0 3px rgba(240, 157, 28, 0.2);
+}
+
+#join .nav2 {
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+#join .btn-solid {
+  background: var(--m-navy);
+  border-color: var(--m-navy);
+  color: #faf9f6;
+  border-radius: 5px;
+  min-height: 44px;
+  padding: 10px 22px;
+  font-weight: 600;
+}
+
+#join .btn-solid::before {
+  background: var(--m-amber);
+}
+
+@media (hover: hover) {
+  #join .btn-solid:hover {
+    color: var(--m-navy);
+    border-color: var(--m-amber);
+  }
+}
+
+#join .form-status:empty {
+  display: none;
+}
+
+#join .note {
+  margin-top: 10px;
+  font-size: 0.72rem;
+  line-height: 1.4;
+}
+
+/* Digital Membership ID Card Showcase */
+#join .stick {
+  position: static;
+}
+
+#join .cardcap {
+  margin-top: 10px;
+  font-size: 0.75rem;
+  color: var(--slate, #4a5568);
+}
+
+#join .perks {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--m-line);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+#join .perk {
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  color: var(--slate, #4a5568);
+}
+
+#join .perk b {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 0.84rem;
+  color: var(--m-navy);
+}
+
+/* Tablet */
+@media (max-width: 1024px) and (min-width: 761px) {
+  #join.join-embedded .sec-head,
+  #join .join {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}
+
+/* Mobile Layout Upgrade */
+@media (max-width: 760px) {
+  #join {
+    padding-block: 68px;
+  }
+
+  #join.join-embedded .sec-head {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding-bottom: 18px;
+    margin-bottom: 24px;
+  }
+
+  #join.join-embedded .sec-head :is(h1, h2) {
+    font-size: clamp(2.55rem, 10vw, 3.3rem);
+  }
+
+  #join .join {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  #join .formcard {
+    padding: 20px 18px 22px;
+  }
+
+  #join .f {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  #join .fld input,
+  #join .fld select,
+  #join .fld textarea {
+    font-size: 16px;
+    min-height: 48px;
+  }
+
+  #join .nav2 {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  #join .nav2 .btn-solid {
+    width: 100%;
+    min-height: 48px;
+    justify-content: center;
+  }
+
+  #join .nav2 .back.show {
+    text-align: center;
+    padding: 10px;
+  }
+
+  #join .perks {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}

@@ -1,0 +1,138 @@
+/* Slim, frameless adaptive-contrast Home section pagination rail */
+
+.section-pagination {
+  --sp-pip-color: rgba(250, 249, 246, 0.34);
+  --sp-active-color: #f09d1c;
+  --sp-active-glow: rgba(240, 157, 28, 0.55);
+  --sp-hover-color: #ffb338;
+  --sp-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  position: fixed;
+  z-index: 90;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 0;
+  transition: color 240ms ease;
+}
+
+.section-pagination.is-on-light {
+  --sp-pip-color: rgba(11, 25, 44, 0.22);
+  --sp-active-color: #c9770a;
+  --sp-active-glow: rgba(201, 119, 10, 0.35);
+  --sp-hover-color: #c9770a;
+}
+
+.section-page-dot {
+  position: relative;
+  width: 18px;
+  height: 15px;
+  display: grid;
+  place-items: center;
+  text-decoration: none;
+}
+
+.section-page-dot.is-active {
+  height: 22px;
+}
+
+.section-page-pip {
+  width: 4px;
+  height: 4px;
+  border-radius: 99px;
+  background: var(--sp-pip-color);
+  transition:
+    height 260ms var(--sp-ease),
+    width 220ms var(--sp-ease),
+    background 220ms ease,
+    box-shadow 260ms ease,
+    transform 220ms var(--sp-ease);
+}
+
+.section-page-dot:hover .section-page-pip,
+.section-page-dot:focus-visible .section-page-pip {
+  background: var(--sp-hover-color);
+  transform: scale(1.35);
+}
+
+.section-page-dot.is-active .section-page-pip {
+  width: 4px;
+  height: 16px;
+  background: var(--sp-active-color);
+  box-shadow: 0 0 10px var(--sp-active-glow);
+}
+
+.section-page-dot:focus-visible {
+  outline: 2px solid var(--sp-active-color);
+  outline-offset: 2px;
+  border-radius: 99px;
+}
+
+.section-page-tooltip {
+  position: absolute;
+  right: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%) translateX(6px);
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 10px;
+  border-radius: 99px;
+  background: rgba(7, 20, 38, 0.94);
+  border: 1px solid rgba(240, 157, 28, 0.32);
+  color: #faf9f6;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  box-shadow: 0 10px 22px -12px rgba(4, 12, 24, 0.55);
+  transition:
+    opacity 160ms ease,
+    transform 200ms var(--sp-ease);
+}
+
+.section-page-tooltip small {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #f09d1c;
+}
+
+@media (hover: hover) {
+  .section-page-dot:hover .section-page-tooltip,
+  .section-page-dot:focus-visible .section-page-tooltip {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+  }
+}
+
+.section-page-dot:focus-visible .section-page-tooltip {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+
+@media (max-width: 900px) {
+  .section-pagination {
+    right: 10px;
+  }
+}
+
+@media (max-width: 760px) {
+  .section-pagination {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section-pagination,
+  .section-page-pip,
+  .section-page-tooltip {
+    transition: none;
+  }
+}

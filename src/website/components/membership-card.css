@@ -1,0 +1,280 @@
+/* Finalised NLF Digital Advocate Credential Card */
+
+.nlf-idcard {
+  perspective: 1200px;
+  max-width: 465px;
+  width: 100%;
+  margin-inline: auto;
+}
+
+.nlf-idcard .idc {
+  position: relative;
+  aspect-ratio: 1.586;
+  border-radius: 18px;
+  padding: 0;
+  color: #faf9f6;
+  overflow: hidden;
+  background:
+    radial-gradient(68% 72% at 92% 8%, rgba(240, 157, 28, 0.16) 0%, rgba(240, 157, 28, 0) 68%),
+    radial-gradient(56% 58% at 10% 94%, rgba(33, 74, 132, 0.36) 0%, rgba(7, 20, 38, 0) 72%),
+    linear-gradient(138deg, #061224 0%, #0e2444 54%, #07162b 100%);
+  box-shadow:
+    0 26px 52px -24px rgba(7, 20, 38, 0.62),
+    inset 0 0 0 1px rgba(240, 157, 28, 0.36);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.idc-trim {
+  height: 3px;
+  width: 100%;
+  flex-shrink: 0;
+  background: linear-gradient(90deg, #9a741c 0%, #f09d1c 50%, #ffcb6b 100%);
+}
+
+.idc-guilloche {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.08;
+  z-index: 0;
+}
+
+.idc-surface {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 14px 20px 15px;
+  gap: 8px;
+}
+
+/* Header Band */
+.idc-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 9px;
+  border-bottom: 1px solid rgba(240, 157, 28, 0.2);
+}
+
+.idc-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.idc-brand .crest {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+}
+
+.idc-brand-text {
+  min-width: 0;
+}
+
+.idc-org {
+  margin: 0;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #ffb338;
+  line-height: 1.25;
+}
+
+.idc-doc {
+  margin: 1px 0 0;
+  font-size: 0.5rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(250, 249, 246, 0.64);
+  line-height: 1.2;
+}
+
+.idc-tier-pill {
+  flex-shrink: 0;
+  padding: 4px 9px;
+  border-radius: 4px;
+  border: 1px solid rgba(240, 157, 28, 0.48);
+  background: rgba(240, 157, 28, 0.12);
+  color: #ffd07b;
+  font-size: 0.52rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Middle Identity & Smart Chip */
+.idc-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 7px;
+  margin-block: auto;
+}
+
+.idc-chip-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.idc-chip {
+  width: 32px;
+  height: 23px;
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.35));
+}
+
+.idc-serial {
+  font-size: 0.52rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(194, 206, 221, 0.68);
+}
+
+.nlf-idcard .idc .nm {
+  font-family: var(--serif);
+  font-size: clamp(1.22rem, 2.05vw, 1.62rem);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  color: #faf9f6;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.idc-specs {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 10px;
+}
+
+.idc-spec {
+  min-width: 0;
+}
+
+.idc-spec small {
+  display: block;
+  font-size: 0.48rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 179, 56, 0.85);
+}
+
+.idc-spec span {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+  color: rgba(250, 249, 246, 0.92);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Bottom Footer Strip + Specimen QR */
+.idc-foot {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 9px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.idc-unit {
+  min-width: 0;
+  flex: 1;
+}
+
+.idc-unit small {
+  display: block;
+  font-size: 0.48rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(194, 206, 221, 0.66);
+}
+
+.idc-unit strong {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  color: #faf9f6;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.idc-qr-wrap {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.idc-qr-box {
+  width: 38px;
+  height: 38px;
+  padding: 4px;
+  border-radius: 6px;
+  background: #faf9f6;
+  border: 1px solid rgba(240, 157, 28, 0.55);
+  display: grid;
+  place-items: center;
+}
+
+.idc-qr-box svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.idc-qr-tag {
+  font-size: 0.42rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 179, 56, 0.82);
+}
+
+@media (max-width: 480px) {
+  .idc-surface {
+    padding: 12px 15px 13px;
+  }
+
+  .idc-brand .crest {
+    width: 32px;
+    height: 32px;
+  }
+
+  .idc-tier-pill {
+    font-size: 0.48rem;
+    padding: 3px 7px;
+  }
+
+  .idc-qr-box {
+    width: 34px;
+    height: 34px;
+  }
+}
