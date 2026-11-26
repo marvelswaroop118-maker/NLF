@@ -1,6 +1,7 @@
 import './structure.css';
 import { useEffect, useRef, useState } from 'react';
 import PageHeading from '../../components/PageHeading.jsx';
+import { useAccessibleTabs } from '../../hooks/useAccessibleTabs.js';
 import SweepButton from '../shared/SweepButton.jsx';
 import { structureContent as content } from './structure.content.js';
 
@@ -43,10 +44,10 @@ function ValueIcon({ kind }) {
 }
 
 export default function Structure({ embedded = false }) {
-  const [activeIndex, setActiveIndex] = useState(0);
+  const { active, tabProps, panelProps } = useAccessibleTabs('structure', { vertical: true });
   const [revealed, setRevealed] = useState(false);
   const sectionRef = useRef(null);
-  const cardRefs = useRef([]);
+  const Subheading = embedded ? 'h3' : 'h2';
 
   useEffect(() => {
     const el = sectionRef.current;
@@ -68,43 +69,7 @@ export default function Structure({ embedded = false }) {
     return () => observer.disconnect();
   }, []);
 
-  // Track leading docked card during mobile scroll-stack scrolling so the
-  // dark midnight navy + amber gold active state follows the card on top.
-  useEffect(() => {
-    const mobileQuery = window.matchMedia('(max-width: 760px)');
-    let rafId = 0;
-
-    const updateActiveOnScroll = () => {
-      if (!mobileQuery.matches) return;
-      const cards = cardRefs.current.filter(Boolean);
-      if (!cards.length) return;
-
-      let chosen = 0;
-      for (let i = 0; i < cards.length; i += 1) {
-        const rect = cards[i].getBoundingClientRect();
-        const stickyTop = 88 + i * 9;
-        if (rect.top <= stickyTop + 28) {
-          chosen = i;
-        }
-      }
-      setActiveIndex((prev) => (prev === chosen ? prev : chosen));
-    };
-
-    const schedule = () => {
-      cancelAnimationFrame(rafId);
-      rafId = requestAnimationFrame(updateActiveOnScroll);
-    };
-
-    window.addEventListener('scroll', schedule, { passive: true });
-    mobileQuery.addEventListener('change', schedule);
-    return () => {
-      cancelAnimationFrame(rafId);
-      window.removeEventListener('scroll', schedule);
-      mobileQuery.removeEventListener('change', schedule);
-    };
-  }, []);
-
-  const progressRatio = activeIndex >= 0 ? (activeIndex + 1) / content.tiers.length : 0.25;
+  const currentTier = content.tiers[active] || content.tiers[0];
 
   return (
     <section
@@ -155,117 +120,97 @@ export default function Structure({ embedded = false }) {
         </svg>
       </div>
 
-      <div className="wrap">
-        <div className="structure-layout">
-          <div className="structure-intro">
+      <div className="wrap structure-inner">
+        <div className="structure-header">
+          <div className="structure-title-col">
             <PageHeading embedded={embedded}>{content.title}</PageHeading>
             <div className="structure-accent-rule" aria-hidden="true" />
-            <p className="lede">{content.description}</p>
-            <div className="structure-cta-wrap">
-              <SweepButton to={content.cta.to}>{content.cta.label}</SweepButton>
-            </div>
           </div>
 
-          <div className="structure-reader">
-            <div className="structure-bar">
-              <div className="structure-tabs" role="tablist" aria-label="Organisational levels">
-                {content.tiers.map((item, index) => (
-                  <button
-                    key={item.name}
-                    type="button"
-                    role="tab"
-                    aria-selected={activeIndex === index}
-                    onClick={() => setActiveIndex(index)}
-                  >
-                    {item.name === 'Bar Association / Bar Unit' ? 'Bar Unit' : item.name}
-                  </button>
-                ))}
-              </div>
-              <div className="structure-bar-meta" aria-live="polite">
-                <span className="structure-meta-divider" aria-hidden="true" />
-                <span>
-                  {activeIndex >= 0
-                    ? `${content.tiers[activeIndex].num} / 0${content.tiers.length}`
-                    : content.metaLabel}
-                </span>
-              </div>
-              <div
-                className="structure-progress-track"
-                aria-hidden="true"
-                style={{ '--progress': progressRatio }}
-              >
-                <span className="structure-progress-fill" />
-              </div>
+          <div className="structure-lead-col">
+            <p className="lede">{content.description}</p>
+            <SweepButton to={content.cta.to}>{content.cta.label}</SweepButton>
+          </div>
+        </div>
+
+        <div className="structure-stage">
+          <div className="structure-pyramid-wrap">
+            <div className="structure-spine" aria-hidden="true">
+              <span className="structure-spine-line" />
+              <span className="structure-spine-label">Representation flows upward</span>
             </div>
 
-            <div className="structure-list">
-              {content.tiers.map((item, i) => {
-                const isActive = activeIndex === i;
+            <div
+              className="structure-pyramid"
+              role="tablist"
+              aria-label="Organisational levels"
+              aria-orientation="vertical"
+            >
+              {content.tiers.map((item, index) => {
+                const props = tabProps(index, 'structure-tier');
+                const isSelected = active === index;
                 return (
-                  <article
+                  <button
                     key={item.name}
-                    ref={(node) => {
-                      cardRefs.current[i] = node;
-                    }}
-                    className={`structure-entry${isActive ? ' is-active' : ''}`}
+                    {...props}
+                    className={`${props.className}${isSelected ? ' is-active' : ''}`}
                     style={{
-                      '--stack-index': i,
-                      '--reveal-delay': `${i * 60}ms`,
+                      '--tier-w': item.width,
+                      '--tier-delay': `${index * 60}ms`,
                     }}
                   >
-                    <div className="structure-entry-num">{item.num}</div>
-                    <span className="structure-entry-sep" aria-hidden="true" />
-
-                    <div className="structure-entry-main">
-                      <div className="structure-entry-head">
-                        <h3>
-                          <button
-                            type="button"
-                            className="structure-entry-trigger"
-                            aria-expanded={isActive}
-                            onClick={() => setActiveIndex(isActive ? -1 : i)}
-                          >
-                            {item.name}
-                          </button>
-                        </h3>
-                        <span className="structure-mobile-count">{item.tier}</span>
-                      </div>
-
-                      <p className="structure-entry-preview">{item.headline}</p>
-
-                      <div className="structure-entry-expand">
-                        <div className="structure-entry-expand-inner">
-                          <p className="structure-entry-headline">{item.headline}</p>
-                          <p className="structure-entry-full">{item.body}</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <span className="structure-entry-icon" aria-hidden="true">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                        {isActive ? (
-                          <path
-                            d="M6 15l6-6 6 6"
-                            stroke="currentColor"
-                            strokeWidth="1.9"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        ) : (
-                          <path
-                            d="M5 12h14m-6-6 6 6-6 6"
-                            stroke="currentColor"
-                            strokeWidth="1.75"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        )}
-                      </svg>
+                    <span className="structure-tier-top">
+                      <small>{item.tier}</small>
+                      <span className="structure-tier-num">{item.num}</span>
                     </span>
-                  </article>
+                    <b>{item.name}</b>
+                  </button>
                 );
               })}
             </div>
+          </div>
+
+          <div className="structure-detail-panel">
+            {content.tiers.map((item, index) => {
+              const panel = panelProps(index, 'structure-detail-card');
+              const isCurrent = active === index;
+              return (
+                <div
+                  key={item.name}
+                  {...panel}
+                  className={`${panel.className}${isCurrent ? ' is-current' : ''}`}
+                >
+                  <div className="structure-detail-kicker">
+                    <span>{item.tier}</span>
+                    <span className="structure-detail-dot" aria-hidden="true" />
+                    <span>{item.scope}</span>
+                  </div>
+
+                  <Subheading>{item.headline}</Subheading>
+                  <p className="structure-detail-body">{item.body}</p>
+
+                  <div className="structure-escalation" aria-label="Upward representation flow">
+                    <span className="structure-escalation-title">Escalation path</span>
+                    <ol className="structure-chain">
+                      {content.chainLabel.map((label, chainIdx) => {
+                        const isNodeCurrent = currentTier.chainIndex === chainIdx;
+                        const isNodePassed = chainIdx <= currentTier.chainIndex;
+                        return (
+                          <li
+                            key={label}
+                            className={`${isNodeCurrent ? 'is-current' : ''}${
+                              isNodePassed ? ' is-reached' : ''
+                            }`.trim()}
+                          >
+                            <span>{label}</span>
+                          </li>
+                        );
+                      })}
+                    </ol>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
 
@@ -274,7 +219,7 @@ export default function Structure({ embedded = false }) {
             <div
               className="structure-value"
               key={val.label}
-              style={{ '--val-delay': `${220 + i * 55}ms` }}
+              style={{ '--val-delay': `${180 + i * 50}ms` }}
             >
               <span className="structure-value-icon">
                 <ValueIcon kind={val.icon} />
